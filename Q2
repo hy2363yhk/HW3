@@ -1,24 +1,49 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
 class Solution {
-    public int characterReplacement(String s, int k) {
-         int[] count = new int[26]; // To keep count of each character in the current window
-    int maxCount = 0; // The count of the most frequent character in the current window
-    int maxLength = 0; // The length of the longest valid substring found so far
-    
-    int left = 0; // Left pointer for the sliding window
-    for (int right = 0; right < s.length(); right++) {
-        maxCount = Math.max(maxCount, ++count[s.charAt(right) - 'A']);
-        
-        // If the current window size minus the count of the most frequent character
-        // is greater than k, it means we need to shrink the window
-        if (right - left + 1 - maxCount > k) {
-            count[s.charAt(left) - 'A']--; // Reduce the count of the leftmost character as we're about to exclude it
-            left++; // Shrink the window from the left
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if (head == nullptr || k == 1) return head;
+
+        ListNode dummy(0);
+        dummy.next = head;
+        ListNode *prev = &dummy, *curr = head, *next = nullptr;
+
+        // Count the number of nodes in the list
+        int count = 0;
+        while (curr) {
+            curr = curr->next;
+            count++;
         }
-        
-        // Calculate the length of the current valid window and update maxLength if necessary
-        maxLength = Math.max(maxLength, right - left + 1);
+
+        // Reinitialize curr to the head of the list
+        curr = head;
+
+        // Reverse every k nodes of the linked list
+        while (count >= k) {
+            curr = prev->next;  // The start of the next k nodes
+            next = curr->next;  // The second node of the next k nodes
+
+            // Reverse k nodes
+            for (int i = 1; i < k; i++) {
+                curr->next = next->next;
+                next->next = prev->next;
+                prev->next = next;
+                next = curr->next;
+            }
+
+            prev = curr;
+            count -= k;
+        }
+
+        return dummy.next;
     }
-    
-    return maxLength;
-    }
-}
+};
